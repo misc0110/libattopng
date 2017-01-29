@@ -208,19 +208,18 @@ Back to [module description](#module-libattopngh).
 
 ### Function `libattopng_put_pixel`
 
-
-
-- the 8bit palette index (PNG_PALETTE)
-- the 8bit gray value (PNG_GRAYSCALE)
-- a 16bit value where the lower 8bit are the gray value and
-the upper 8bit are the opacity (PNG_GRAYSCALE_ALPHA)
-- a 24bit RGB value (PNG_RGB)
-- a 32bit RGBA value (PNG_RGBA)
+Sets the pixel of the current pixel within a stream and advances to the next pixel
 
 **Parameters:**
 
 - `png`: Reference to the image
 - `color`: The pixel value, depending on the type this is
+	- the 8bit palette index (PNG_PALETTE)
+	- the 8bit gray value (PNG_GRAYSCALE)
+	- a 16bit value where the lower 8bit are the gray value and
+	the upper 8bit are the opacity (PNG_GRAYSCALE_ALPHA)
+	- a 24bit RGB value (PNG_RGB)
+	- a 32bit RGBA value (PNG_RGBA)
 
 **Returns:**
 
@@ -230,10 +229,7 @@ Back to [module description](#module-libattopngh).
 
 ### Function `libattopng_get_data`
 
-
-
-> The data stream is free'd when calling \ref libattopng_destroy and
-must not be free'd be the caller
+Returns the image as PNG data stream
 
 **Parameters:**
 
@@ -243,13 +239,15 @@ must not be free'd be the caller
 **Returns:**
 
 - A reference to the PNG output stream
+> The data stream is free'd when calling \ref libattopng_destroy and
+must not be free'd be the caller
+
 
 Back to [module description](#module-libattopngh).
 
 ### Function `libattopng_save`
 
-
-
+Saves the image as a PNG file
 
 **Parameters:**
 
