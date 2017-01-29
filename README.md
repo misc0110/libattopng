@@ -82,38 +82,33 @@ The module `libattopng.h` defines the following functions.
 
 ### Function `libattopng_new`
 
+Create a new, empty PNG image to be used with all other functions.
 
-
-- PNG_GRAYSCALE (8bit grayscale),
-- PNG_GRAYSCALE_ALPHA (8bit grayscale with 8bit alpha),
-- PNG_PALETTE (palette with up to 256 entries, each 32bit RGBA)
-- PNG_RGB (24bit RGB values)
-- PNG_RGBA (32bit RGB values with alpha)
-Possible errors are:
-- Out of memory
-- Width and height combined exceed the maximum integer size
-
-> It's the callers responsibility to free the data structure.
-
-See  [`libattopng_destroy`](#function-libattopng_destroy)
+> It's the callers responsibility to free the data structure. See  [`libattopng_destroy`](#function-libattopng_destroy)
 
 **Parameters:**
 
 - `width`: The width of the image in  pixels
 - `height`: The height of the image in pixels
 - `type`: The type of image. Possible values are
+	- PNG_GRAYSCALE (8bit grayscale),
+	- PNG_GRAYSCALE_ALPHA (8bit grayscale with 8bit alpha),
+	- PNG_PALETTE (palette with up to 256 entries, each 32bit RGBA)
+	- PNG_RGB (24bit RGB values)
+	- PNG_RGBA (32bit RGB values with alpha)
 
 **Returns:**
 
 - reference to a PNG image to be used with all other functions or NULL on error.
+	Possible errors are:
+	- Out of memory
+	- Width and height combined exceed the maximum integer size
 
 Back to [module description](#module-libattopngh).
 
 ### Function `libattopng_destroy`
 
-
-
-
+Destroys the reference to a PNG image and free all associated memory.
 
 **Parameters:**
 
@@ -127,8 +122,7 @@ Back to [module description](#module-libattopngh).
 
 ### Function `libattopng_set_palette`
 
-
-
+Sets the image's palette if the image type is PNG_PALETTE.
 
 **Parameters:**
 
@@ -144,16 +138,7 @@ Back to [module description](#module-libattopngh).
 
 ### Function `libattopng_set_pixel`
 
-
-
-- the 8bit palette index (\ref PNG_PALETTE)
-- the 8bit gray value (\ref PNG_GRAYSCALE)
-- a 16bit value where the lower 8bit are the gray value and
-the upper 8bit are the opacity (\ref PNG_GRAYSCALE_ALPHA)
-- a 24bit RGB value (\ref PNG_RGB)
-- a 32bit RGBA value (\ref PNG_RGBA)
-> If the coordinates are not within the bounds of the image,
-the functions does nothing.
+Sets the pixel's color at the specified position
 
 **Parameters:**
 
@@ -161,6 +146,14 @@ the functions does nothing.
 - `x`: X coordinate
 - `y`: Y coordinate
 - `color`: The pixel value, depending on the type this is
+	- the 8bit palette index (PNG_PALETTE)
+	- the 8bit gray value (PNG_GRAYSCALE)
+	- a 16bit value where the lower 8bit are the gray value and
+	the upper 8bit are the opacity (PNG_GRAYSCALE_ALPHA)
+	- a 24bit RGB value (PNG_RGB)
+	- a 32bit RGBA value (PNG_RGBA)
+
+> If the coordinates are not within the bounds of the image, the functions does nothing.
 
 **Returns:**
 
@@ -170,15 +163,7 @@ Back to [module description](#module-libattopngh).
 
 ### Function `libattopng_get_pixel`
 
-
-
-- the 8bit palette index (\ref PNG_PALETTE)
-- the 8bit gray value (\ref PNG_GRAYSCALE)
-- a 16bit value where the lower 8bit are the gray value and
-the upper 8bit are the opacity (\ref PNG_GRAYSCALE_ALPHA)
-- a 24bit RGB value (\ref PNG_RGB)
-- a 32bit RGBA value (\ref PNG_RGBA)
-- 0 if the coordinates are out of bounds
+Returns the pixel's color at the specified position
 
 **Parameters:**
 
@@ -189,15 +174,20 @@ the upper 8bit are the opacity (\ref PNG_GRAYSCALE_ALPHA)
 **Returns:**
 
 - The pixel value, depending on the type this is
+	- the 8bit palette index (PNG_PALETTE)
+	- the 8bit gray value (PNG_GRAYSCALE)
+	- a 16bit value where the lower 8bit are the gray value and
+	the upper 8bit are the opacity (PNG_GRAYSCALE_ALPHA)
+	- a 24bit RGB value (PNG_RGB)
+	- a 32bit RGBA value (PNG_RGBA)
+	- 0 if the coordinates are out of bounds
+
 
 Back to [module description](#module-libattopngh).
 
 ### Function `libattopng_start_stream`
 
-
-
-
-[`libattopng_put_pixel`](#f-libattopng_put_pixel)
+Set the start position for a batch of pixels
 
 **Parameters:**
 
@@ -208,6 +198,11 @@ Back to [module description](#module-libattopngh).
 **Returns:**
 
 No return
+
+**See:**
+
+[`libattopng_put_pixel`](#f-libattopng_put_pixel)
+
 
 Back to [module description](#module-libattopngh).
 
@@ -237,7 +232,7 @@ Back to [module description](#module-libattopngh).
 
 
 
-@note The data stream is free'd when calling \ref libattopng_destroy and
+> The data stream is free'd when calling \ref libattopng_destroy and
 must not be free'd be the caller
 
 **Parameters:**
