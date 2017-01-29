@@ -169,9 +169,9 @@ static void libattopng_out_write(libattopng_t *png, char *data, size_t len) {
 
 // ---------------------------------------------------------------------------
 static void libattopng_out_write_adler(libattopng_t *png, unsigned char data) {
-    libattopng_out_raw_write(png, (char*)&data, 1);
-    png->s1 = (uint16_t)((png->s1 + data) % LIBATTOPNG_ADLER_BASE);
-    png->s2 = (uint16_t)((png->s2 + png->s1) % LIBATTOPNG_ADLER_BASE);
+    libattopng_out_raw_write(png, (char *) &data, 1);
+    png->s1 = (uint16_t) ((png->s1 + data) % LIBATTOPNG_ADLER_BASE);
+    png->s2 = (uint16_t) ((png->s2 + png->s1) % LIBATTOPNG_ADLER_BASE);
 }
 
 // ---------------------------------------------------------------------------
@@ -179,8 +179,8 @@ static void libattopng_pixel_header(libattopng_t *png, size_t offset, size_t bpl
     if (offset > bpl) {
         // not the last line
         libattopng_out_write(png, "\0", 1);
-        libattopng_out_uint16(png, (uint16_t)bpl);
-        libattopng_out_uint16(png, (uint16_t)~bpl);
+        libattopng_out_uint16(png, (uint16_t) bpl);
+        libattopng_out_uint16(png, (uint16_t) ~bpl);
     } else {
         // last line
         libattopng_out_write(png, "\1", 1);
@@ -216,7 +216,7 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
     // palette
     if (png->type == PNG_PALETTE) {
         size_t s = png->palette_length;
-        if(s < 16) {
+        if (s < 16) {
             s = 16; // minimum palette length
         }
         libattopng_new_chunk(png, "PLTE", 3 * s);
@@ -242,16 +242,19 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
     size_t bpl = 1 + png->bpp * png->width;
     size_t raw_size = png->height * bpl;
     size_t size = 2 + png->height * (5 + bpl) + 4;
-    size_t p, pos;
+    size_t p, pos, corr = 0;
     libattopng_new_chunk(png, "IDAT", size);
     libattopng_out_write(png, "\170\332", 2);
 
-    unsigned char* pixel = (unsigned char*)png->data;
+    unsigned char *pixel = (unsigned char *) png->data;
     png->s1 = 1;
     png->s2 = 0;
     index = 0;
-    for(pos = 0; pos < png->width * png->height; pos++) {
-        if(index == 0) {
+    if (png->type == PNG_RGB) {
+        corr = 1;
+    }
+    for (pos = 0; pos < png->width * png->height; pos++) {
+        if (index == 0) {
             // line header
             libattopng_pixel_header(png, raw_size, bpl);
             libattopng_out_write_adler(png, 0); // no filter
@@ -259,10 +262,11 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
         }
 
         // pixel
-        for(p = 0; p < png->bpp; p++) {
+        for (p = 0; p < png->bpp; p++) {
             libattopng_out_write_adler(png, *pixel);
             pixel++;
         }
+        pixel += corr;
 
         raw_size -= png->bpp;
         index = (index + 1) % png->width;

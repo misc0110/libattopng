@@ -33,5 +33,19 @@ int main(int argc, char *argv[]) {
     }
     libattopng_save(png, "test1.png");
     libattopng_destroy(png);
+
+    // -----------------
+
+    printf("-----------------------\n");
+
+    png = libattopng_new(W, H, PNG_RGB);
+
+    for(y = 0; y < H; y++) {
+        for(x = 0; x < W; x++) {
+            libattopng_set_pixel(png, x, y, palette[((x + y) % 16) / 4]);
+        }
+    }
+    libattopng_save(png, "test2.png");
+    libattopng_destroy(png);
     return 0;
 }
