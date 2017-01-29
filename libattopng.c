@@ -52,6 +52,8 @@ libattopng_t *libattopng_new(size_t width, size_t height, libattopng_type_t type
     if (type == PNG_PALETTE) {
         png->palette = (uint32_t *) calloc(256, sizeof(uint32_t));
         png->bpp = 1;
+    } else if (type == PNG_GRAYSCALE) {
+        png->bpp = 1;
     } else if (type == PNG_GRAYSCALE_ALPHA) {
         png->capacity *= 2;
         png->bpp = 2;
