@@ -36,13 +36,14 @@ static const uint32_t libattopng_crc32[256] = {
         0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 libattopng_t *libattopng_new(size_t width, size_t height, libattopng_type_t type) {
+    libattopng_t *png;
     if (SIZE_MAX / 4 / width < height) {
-        // ensure no type leads to an integer overflow
+        /* ensure no type leads to an integer overflow */
         return NULL;
     }
-    libattopng_t *png = (libattopng_t *) malloc(sizeof(libattopng_t));
+    png = (libattopng_t *) malloc(sizeof(libattopng_t));
     png->width = width;
     png->height = height;
     png->capacity = width * height;
@@ -54,6 +55,7 @@ libattopng_t *libattopng_new(size_t width, size_t height, libattopng_type_t type
     png->type = type;
     png->stream_x = 0;
     png->stream_y = 0;
+
     if (type == PNG_PALETTE) {
         png->palette = (uint32_t *) calloc(256, sizeof(uint32_t));
         if (!png->palette) {
@@ -83,7 +85,7 @@ libattopng_t *libattopng_new(size_t width, size_t height, libattopng_type_t type
     return png;
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 int libattopng_set_palette(libattopng_t *png, uint32_t *palette, size_t length) {
     if (length > 256) {
         return 1;
@@ -93,7 +95,7 @@ int libattopng_set_palette(libattopng_t *png, uint32_t *palette, size_t length) 
     return 0;
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 void libattopng_set_pixel(libattopng_t *png, size_t x, size_t y, uint32_t color) {
     if (!png || x >= png->width || y >= png->height) {
         return;
@@ -103,11 +105,11 @@ void libattopng_set_pixel(libattopng_t *png, size_t x, size_t y, uint32_t color)
     } else if (png->type == PNG_GRAYSCALE_ALPHA) {
         ((uint16_t *) png->data)[x + y * png->width] = (uint16_t) (color & 0xffff);
     } else {
-        ((uint32_t *) png->data)[x + y * png->width] = index;
+        ((uint32_t *) png->data)[x + y * png->width] = color;
     }
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 uint32_t libattopng_get_pixel(libattopng_t* png, size_t x, size_t y) {
     uint32_t pixel = 0;
     if (!png || x >= png->width || y >= png->height) {
@@ -123,7 +125,7 @@ uint32_t libattopng_get_pixel(libattopng_t* png, size_t x, size_t y) {
     return pixel;
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 void libattopng_start_stream(libattopng_t* png, size_t x, size_t y) {
     if(!png || x >= png->width || y >= png->height) {
         return;
@@ -132,13 +134,14 @@ void libattopng_start_stream(libattopng_t* png, size_t x, size_t y) {
     png->stream_y = y;
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 void libattopng_put_pixel(libattopng_t* png, uint32_t color) {
+    size_t x, y;
     if(!png) {
         return;
     }
-    size_t x = png->stream_x;
-    size_t y = png->stream_y;
+    x = png->stream_x;
+    y = png->stream_y;
     if (png->type == PNG_PALETTE || png->type == PNG_GRAYSCALE) {
         png->data[x + y * png->width] = (char) (color & 0xff);
     } else if (png->type == PNG_GRAYSCALE_ALPHA) {
@@ -158,7 +161,7 @@ void libattopng_put_pixel(libattopng_t* png, uint32_t color) {
     png->stream_y = y;
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static uint32_t libattopng_swap32(uint32_t num) {
     return ((num >> 24) & 0xff) |
            ((num << 8) & 0xff0000) |
@@ -166,7 +169,7 @@ static uint32_t libattopng_swap32(uint32_t num) {
            ((num << 24) & 0xff000000);
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static uint32_t libattopng_crc(const unsigned char *data, size_t len, uint32_t crc) {
     size_t i;
     for (i = 0; i < len; i++) {
@@ -175,7 +178,7 @@ static uint32_t libattopng_crc(const unsigned char *data, size_t len, uint32_t c
     return crc;
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static void libattopng_out_raw_write(libattopng_t *png, const char *data, size_t len) {
     size_t i;
     for (i = 0; i < len; i++) {
@@ -183,25 +186,25 @@ static void libattopng_out_raw_write(libattopng_t *png, const char *data, size_t
     }
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static void libattopng_out_raw_uint(libattopng_t *png, uint32_t val) {
     *(uint32_t *) (png->out + png->out_pos) = val;
     png->out_pos += 4;
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static void libattopng_out_raw_uint16(libattopng_t *png, uint16_t val) {
     *(uint16_t *) (png->out + png->out_pos) = val;
     png->out_pos += 2;
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static void libattopng_out_raw_uint8(libattopng_t *png, uint8_t val) {
     *(uint8_t *) (png->out + png->out_pos) = val;
     png->out_pos++;
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static void libattopng_new_chunk(libattopng_t *png, const char *name, size_t len) {
     png->crc = 0xffffffff;
     libattopng_out_raw_uint(png, libattopng_swap32((uint32_t) len));
@@ -209,64 +212,66 @@ static void libattopng_new_chunk(libattopng_t *png, const char *name, size_t len
     libattopng_out_raw_write(png, name, 4);
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static void libattopng_end_chunk(libattopng_t *png) {
     libattopng_out_raw_uint(png, libattopng_swap32(~png->crc));
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static void libattopng_out_uint32(libattopng_t *png, uint32_t val) {
-    png->crc = libattopng_crc((void *) &val, 4, png->crc);
+    png->crc = libattopng_crc((const unsigned char *) &val, 4, png->crc);
     libattopng_out_raw_uint(png, val);
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static void libattopng_out_uint16(libattopng_t *png, uint16_t val) {
-    png->crc = libattopng_crc((void *) &val, 2, png->crc);
+    png->crc = libattopng_crc((const unsigned char *) &val, 2, png->crc);
     libattopng_out_raw_uint16(png, val);
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static void libattopng_out_uint8(libattopng_t *png, uint8_t val) {
-    png->crc = libattopng_crc((void *) &val, 1, png->crc);
+    png->crc = libattopng_crc((const unsigned char *) &val, 1, png->crc);
     libattopng_out_raw_uint8(png, val);
 }
 
-// ---------------------------------------------------------------------------
-static void libattopng_out_write(libattopng_t *png, char *data, size_t len) {
+/* ------------------------------------------------------------------------ */
+static void libattopng_out_write(libattopng_t *png, const char *data, size_t len) {
     png->crc = libattopng_crc((const unsigned char *) data, len, png->crc);
     libattopng_out_raw_write(png, data, len);
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static void libattopng_out_write_adler(libattopng_t *png, unsigned char data) {
     libattopng_out_raw_write(png, (char *) &data, 1);
     png->s1 = (uint16_t) ((png->s1 + data) % LIBATTOPNG_ADLER_BASE);
     png->s2 = (uint16_t) ((png->s2 + png->s1) % LIBATTOPNG_ADLER_BASE);
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 static void libattopng_pixel_header(libattopng_t *png, size_t offset, size_t bpl) {
     if (offset > bpl) {
-        // not the last line
+        /* not the last line */
         libattopng_out_write(png, "\0", 1);
         libattopng_out_uint16(png, (uint16_t) bpl);
         libattopng_out_uint16(png, (uint16_t) ~bpl);
     } else {
-        // last line
+        /* last line */
         libattopng_out_write(png, "\1", 1);
         libattopng_out_uint16(png, (uint16_t) offset);
         libattopng_out_uint16(png, (uint16_t) ~offset);
     }
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 char *libattopng_get_data(libattopng_t *png, size_t *len) {
+    size_t index, bpl, raw_size, size, p, pos, corr;
+    unsigned char *pixel;
     if (!png) {
         return NULL;
     }
     if (png->out) {
-        // delete old output if any
+        /* delete old output if any */
         free(png->out);
     }
     png->out_capacity = png->capacity + 4096 * 8;
@@ -277,27 +282,26 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
     }
 
     libattopng_out_raw_write(png, "\211PNG\r\n\032\n", 8);
-    size_t index;
 
-    // IHDR
+    /* IHDR */
     libattopng_new_chunk(png, "IHDR", 13);
     libattopng_out_uint32(png, libattopng_swap32((uint32_t) (png->width)));
     libattopng_out_uint32(png, libattopng_swap32((uint32_t) (png->height)));
-    libattopng_out_uint8(png, 8); // bit depth
+    libattopng_out_uint8(png, 8); /* bit depth */
     libattopng_out_uint8(png, (uint8_t) png->type);
-    libattopng_out_uint8(png, 0); // compression
-    libattopng_out_uint8(png, 0); // filter
-    libattopng_out_uint8(png, 0); // interlace method
+    libattopng_out_uint8(png, 0); /* compression */
+    libattopng_out_uint8(png, 0); /* filter */
+    libattopng_out_uint8(png, 0); /* interlace method */
     libattopng_end_chunk(png);
 
-    // palette
+    /* palette */
     if (png->type == PNG_PALETTE) {
+        char entry[3];
         size_t s = png->palette_length;
         if (s < 16) {
-            s = 16; // minimum palette length
+            s = 16; /* minimum palette length */
         }
         libattopng_new_chunk(png, "PLTE", 3 * s);
-        char entry[3];
         for (index = 0; index < s; index++) {
             entry[0] = (char) (png->palette[index] & 255);
             entry[1] = (char) ((png->palette[index] >> 8) & 255);
@@ -306,7 +310,7 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
         }
         libattopng_end_chunk(png);
 
-        // transparency
+        /* transparency */
         libattopng_new_chunk(png, "tRNS", s);
         for (index = 0; index < s; index++) {
             entry[0] = (char) ((png->palette[index] >> 24) & 255);
@@ -315,30 +319,31 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
         libattopng_end_chunk(png);
     }
 
-    // data
-    size_t bpl = 1 + png->bpp * png->width;
-    size_t raw_size = png->height * bpl;
-    size_t size = 2 + png->height * (5 + bpl) + 4;
-    size_t p, pos, corr = 0;
+    /* data */
+    bpl = 1 + png->bpp * png->width;
+    raw_size = png->height * bpl;
+    size = 2 + png->height * (5 + bpl) + 4;
     libattopng_new_chunk(png, "IDAT", size);
     libattopng_out_write(png, "\170\332", 2);
 
-    unsigned char *pixel = (unsigned char *) png->data;
+    pixel = (unsigned char *) png->data;
     png->s1 = 1;
     png->s2 = 0;
     index = 0;
     if (png->type == PNG_RGB) {
         corr = 1;
+    } else {
+        corr = 0;
     }
     for (pos = 0; pos < png->width * png->height; pos++) {
         if (index == 0) {
-            // line header
+            /* line header */
             libattopng_pixel_header(png, raw_size, bpl);
-            libattopng_out_write_adler(png, 0); // no filter
+            libattopng_out_write_adler(png, 0); /* no filter */
             raw_size--;
         }
 
-        // pixel
+        /* pixel */
         for (p = 0; p < png->bpp; p++) {
             libattopng_out_write_adler(png, *pixel);
             pixel++;
@@ -348,13 +353,13 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
         raw_size -= png->bpp;
         index = (index + 1) % png->width;
     }
-    // checksum
+    /* checksum */
     png->s1 %= LIBATTOPNG_ADLER_BASE;
     png->s2 %= LIBATTOPNG_ADLER_BASE;
     libattopng_out_uint32(png, libattopng_swap32((uint32_t) ((png->s2 << 16) | png->s1)));
     libattopng_end_chunk(png);
 
-    // end of image
+    /* end of image */
     libattopng_new_chunk(png, "IEND", 0);
     libattopng_end_chunk(png);
 
@@ -364,14 +369,15 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
     return png->out;
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 int libattopng_save(libattopng_t *png, const char *filename) {
     size_t len;
+    FILE* f;
     char *data = libattopng_get_data(png, &len);
     if (!data) {
         return 1;
     }
-    FILE *f = fopen(filename, "wb");
+    f = fopen(filename, "wb");
     if (!f) {
         return 1;
     }
@@ -383,7 +389,7 @@ int libattopng_save(libattopng_t *png, const char *filename) {
     return 0;
 }
 
-// ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------------ */
 void libattopng_destroy(libattopng_t *png) {
     if (!png) {
         return;

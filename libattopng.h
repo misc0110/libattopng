@@ -13,6 +13,10 @@
 #ifndef _LIBATTOPNG_H_
 #define _LIBATTOPNG_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <stdint.h>
 
@@ -201,5 +205,9 @@ char *libattopng_get_data(libattopng_t *png, size_t *len);
  */
 int libattopng_save(libattopng_t *png, const char *filename);
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif
 
