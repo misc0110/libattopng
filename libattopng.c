@@ -259,7 +259,7 @@ static void libattopng_out_write(libattopng_t *png, const char *data, size_t len
 
 /* ------------------------------------------------------------------------ */
 static void libattopng_out_write_adler(libattopng_t *png, unsigned char data) {
-    libattopng_out_raw_write(png, (char *) &data, 1);
+    libattopng_out_write(png, (char *) &data, 1);
     png->s1 = (uint16_t) ((png->s1 + data) % LIBATTOPNG_ADLER_BASE);
     png->s2 = (uint16_t) ((png->s2 + png->s1) % LIBATTOPNG_ADLER_BASE);
 }
