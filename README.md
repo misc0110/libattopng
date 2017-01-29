@@ -89,6 +89,7 @@ Create a new, empty PNG image to be used with all other functions.
 - `width`: The width of the image in  pixels
 - `height`: The height of the image in pixels
 - `type`: The type of image. Possible values are
+
         - PNG_GRAYSCALE (8bit grayscale),
         - PNG_GRAYSCALE_ALPHA (8bit grayscale with 8bit alpha),
         - PNG_PALETTE (palette with up to 256 entries, each 32bit RGBA)
@@ -138,6 +139,7 @@ Sets the pixel's color at the specified position
 - `x`: X coordinate
 - `y`: Y coordinate
 - `color`: The pixel value, depending on the type this is
+
         - the 8bit palette index (PNG_PALETTE)
         - the 8bit gray value (PNG_GRAYSCALE)
         - a 16bit value where the lower 8bit are the gray value and
@@ -164,6 +166,7 @@ Returns the pixel's color at the specified position
 **Returns:**
 
 - The pixel value, depending on the type this is
+
         - the 8bit palette index (PNG_PALETTE)
         - the 8bit gray value (PNG_GRAYSCALE)
         - a 16bit value where the lower 8bit are the gray value and
@@ -198,6 +201,7 @@ Sets the pixel of the current pixel within a stream and advances to the next pix
 
 - `png`: Reference to the image
 - `color`: The pixel value, depending on the type this is
+
         - the 8bit palette index (PNG_PALETTE)
         - the 8bit gray value (PNG_GRAYSCALE)
         - a 16bit value where the lower 8bit are the gray value and
