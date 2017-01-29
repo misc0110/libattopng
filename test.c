@@ -68,5 +68,16 @@ int main(int argc, char *argv[]) {
     libattopng_save(png, "test_gray_alpha.png");
     libattopng_destroy(png);
 
+    // -----------------
+
+    png = libattopng_new(W, H, PNG_GRAYSCALE);
+
+    libattopng_start_stream(png, 0, 0);
+    for (x = 0; x < W * H; x++) {
+        libattopng_put_pixel(png, 255 * x / (W * H));
+    }
+    libattopng_save(png, "test_gray_stream.png");
+    libattopng_destroy(png);
+
     return 0;
 }

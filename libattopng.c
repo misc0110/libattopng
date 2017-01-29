@@ -36,7 +36,6 @@ static const uint32_t libattopng_crc32[256] = {
         0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-
 // ---------------------------------------------------------------------------
 libattopng_t *libattopng_new(size_t width, size_t height, libattopng_type_t type) {
     if (SIZE_MAX / 4 / width < height) {
@@ -53,6 +52,8 @@ libattopng_t *libattopng_new(size_t width, size_t height, libattopng_type_t type
     png->out_capacity = 0;
     png->out_pos = 0;
     png->type = type;
+    png->stream_x = 0;
+    png->stream_y = 0;
     if (type == PNG_PALETTE) {
         png->palette = (uint32_t *) calloc(256, sizeof(uint32_t));
         if (!png->palette) {
@@ -104,6 +105,57 @@ void libattopng_set_pixel(libattopng_t *png, size_t x, size_t y, uint32_t index)
     } else {
         ((uint32_t *) png->data)[x + y * png->width] = index;
     }
+}
+
+// ---------------------------------------------------------------------------
+uint32_t libattopng_get_pixel(libattopng_t* png, size_t x, size_t y) {
+    uint32_t pixel = 0;
+    if (!png || x >= png->width || y >= png->height) {
+        return pixel;
+    }
+    if (png->type == PNG_PALETTE || png->type == PNG_GRAYSCALE) {
+        pixel = (uint32_t)(png->data[x + y * png->width] & 0xff);
+    } else if (png->type == PNG_GRAYSCALE_ALPHA) {
+        pixel = (uint32_t)(((uint16_t *) png->data)[x + y * png->width] & 0xffff);
+    } else {
+        pixel = ((uint32_t *) png->data)[x + y * png->width];
+    }
+    return pixel;
+}
+
+// ---------------------------------------------------------------------------
+void libattopng_start_stream(libattopng_t* png, size_t x, size_t y) {
+    if(!png || x >= png->width || y >= png->height) {
+        return;
+    }
+    png->stream_x = x;
+    png->stream_y = y;
+}
+
+// ---------------------------------------------------------------------------
+void libattopng_put_pixel(libattopng_t* png, uint32_t index) {
+    if(!png) {
+        return;
+    }
+    size_t x = png->stream_x;
+    size_t y = png->stream_y;
+    if (png->type == PNG_PALETTE || png->type == PNG_GRAYSCALE) {
+        png->data[x + y * png->width] = (char) (index & 0xff);
+    } else if (png->type == PNG_GRAYSCALE_ALPHA) {
+        ((uint16_t *) png->data)[x + y * png->width] = (uint16_t) (index & 0xffff);
+    } else {
+        ((uint32_t *) png->data)[x + y * png->width] = index;
+    }
+    x++;
+    if(x >= png->width) {
+        x = 0;
+        y++;
+        if(y >= png->height) {
+            y = 0;
+        }
+    }
+    png->stream_x = x;
+    png->stream_y = y;
 }
 
 // ---------------------------------------------------------------------------
@@ -330,7 +382,6 @@ int libattopng_save(libattopng_t *png, const char *filename) {
     fclose(f);
     return 0;
 }
-
 
 // ---------------------------------------------------------------------------
 void libattopng_destroy(libattopng_t *png) {
