@@ -397,7 +397,7 @@ int libattopng_save(libattopng_t *png, const char *filename) {
     if (!f) {
         return 1;
     }
-    if (fwrite(data, len, 1, f) != len) {
+    if (fwrite(data, len, 1, f) != 1) {
         fclose(f);
         return 1;
     }
