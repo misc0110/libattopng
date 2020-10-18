@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 
     for (y = 0; y < H; y++) {
         for (x = 0; x < W; x++) {
-            libattopng_set_pixel(png, x, y, (((x + y) / 2) & 256));
+            libattopng_set_pixel(png, x, y, (((x + y) / 2) & 255));
         }
     }
     libattopng_save(png, "test_gray.png");
