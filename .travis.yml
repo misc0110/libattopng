@@ -1,0 +1,40 @@
+language: c
+compiler: gcc
+ 
+jobs:
+    include:
+        - os: linux
+          dist: xenial
+          arch: amd64
+
+        - os: linux
+          dist: xenial
+          arch: arm64
+                    
+        - os: linux
+          dist: bionic
+          arch: amd64
+
+        - os: linux
+          dist: bionic
+          arch: arm64
+
+        - os: linux
+          dist: focal
+          arch: amd64
+
+        - os: linux
+          dist: focal
+          arch: arm64
+script:
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make
+    - ./libattopng
+    - sha1sum test_gray_alpha.png | grep -c 8b12966f11b50080fafb4d2987f96e23f3a54328
+    - sha1sum test_gray_stream.png | grep -c a75c10351df7dc81502fa7aa8d844cb61f5df312
+    - sha1sum test_gray.png | grep -c b56e135644c0ac7e24c54657c57da3b71b0e57ee
+    - sha1sum test_palette.png | grep -c 97bd97ae765d18653b238d5c8a762ca29553eb44
+    - sha1sum test_rgb.png | grep -c 53bde6364a9ecea2d88ecc5b5eb8ad77b9539125
+    - sha1sum test_rgba.png | grep -c 8b396829b7e574e242f3723de31686443d6e588d
