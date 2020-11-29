@@ -321,6 +321,10 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
 
     /* data */
     bpl = 1 + png->bpp * png->width;
+    if(bpl >= 65536) {
+        fprintf(stderr, "[libattopng] ERROR: maximum supported width for this type of PNG is %d pixel\n", (int)(65535 / png->bpp));
+        return NULL;
+    }
     raw_size = png->height * bpl;
     size = 2 + png->height * (5 + bpl) + 4;
     libattopng_new_chunk(png, "IDAT", size);
