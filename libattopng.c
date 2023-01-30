@@ -44,6 +44,9 @@ libattopng_t *libattopng_new(size_t width, size_t height, libattopng_type_t type
         return NULL;
     }
     png = (libattopng_t *) calloc(sizeof(libattopng_t), 1);
+    if(!png) {
+        return NULL;
+    }
     png->width = width;
     png->height = height;
     png->capacity = width * height;
