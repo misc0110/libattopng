@@ -183,10 +183,8 @@ static uint32_t libattopng_crc(const unsigned char *data, size_t len, uint32_t c
 
 /* ------------------------------------------------------------------------ */
 static void libattopng_out_raw_write(libattopng_t *png, const char *data, size_t len) {
-    size_t i;
-    for (i = 0; i < len; i++) {
-        png->out[png->out_pos++] = data[i];
-    }
+    memcpy(png->out+png->out_pos, data, len);
+    png->out_pos+=len;
 }
 
 /* ------------------------------------------------------------------------ */
