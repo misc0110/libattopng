@@ -81,7 +81,9 @@ libattopng_t *libattopng_new(size_t width, size_t height, libattopng_type_t type
 
     png->data = (char *) calloc(png->capacity, 1);
     if (!png->data) {
-        free(png->palette);
+        if (png->palette) {
+            free(png->palette);
+        }
         free(png);
         return NULL;
     }
