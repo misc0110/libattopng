@@ -386,10 +386,12 @@ int libattopng_save(libattopng_t *png, const char *filename) {
     }
     f = fopen(filename, "wb");
     if (!f) {
+        fprintf(stderr, "[libattopng] ERROR: opening file \'%s\'; please check file, and try again\n", filename);
         return 1;
     }
     if (fwrite(data, len, 1, f) != 1) {
         fclose(f);
+        fprintf(stderr, "[libattopng] ERROR: writing to file \'%s\'; please check disk, and try again\n", filename);
         return 1;
     }
     fclose(f);
