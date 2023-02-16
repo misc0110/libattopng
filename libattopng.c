@@ -145,6 +145,10 @@ void libattopng_put_pixel(libattopng_t* png, uint32_t color) {
     }
     x = png->stream_x;
     y = png->stream_y;
+    if ((png->capacity - 1) < (x + y * png->width)) {
+            /* ensure we don't attempt an out of bounds memory write */
+            return;
+    }
     if (png->type == PNG_PALETTE || png->type == PNG_GRAYSCALE) {
         png->data[x + y * png->width] = (char) (color & 0xff);
     } else if (png->type == PNG_GRAYSCALE_ALPHA) {
