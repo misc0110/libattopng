@@ -276,6 +276,7 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
     if (png->out) {
         /* delete old output if any */
         free(png->out);
+        png->out = NULL;
     }
     png->out_capacity = png->capacity + 4096 * 8 + png->width * png->height;
     png->out = (char *) calloc(png->out_capacity, 1);
