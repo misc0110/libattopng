@@ -44,7 +44,7 @@ libattopng_t *libattopng_new(size_t width, size_t height, libattopng_type_t type
         return NULL;
     }
     png = (libattopng_t *) calloc(sizeof(libattopng_t), 1);
-    if(!png) {
+    if (!png) {
         return NULL;
     }
     png->width = width;
@@ -130,7 +130,7 @@ uint32_t libattopng_get_pixel(libattopng_t* png, size_t x, size_t y) {
 
 /* ------------------------------------------------------------------------ */
 void libattopng_start_stream(libattopng_t* png, size_t x, size_t y) {
-    if(!png || x >= png->width || y >= png->height) {
+    if (!png || x >= png->width || y >= png->height) {
         return;
     }
     png->stream_x = x;
@@ -140,7 +140,7 @@ void libattopng_start_stream(libattopng_t* png, size_t x, size_t y) {
 /* ------------------------------------------------------------------------ */
 void libattopng_put_pixel(libattopng_t* png, uint32_t color) {
     size_t x, y;
-    if(!png) {
+    if (!png) {
         return;
     }
     x = png->stream_x;
@@ -153,10 +153,10 @@ void libattopng_put_pixel(libattopng_t* png, uint32_t color) {
         ((uint32_t *) png->data)[x + y * png->width] = color;
     }
     x++;
-    if(x >= png->width) {
+    if (x >= png->width) {
         x = 0;
         y++;
-        if(y >= png->height) {
+        if (y >= png->height) {
             y = 0;
         }
     }
@@ -324,7 +324,7 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
 
     /* data */
     bpl = 1 + png->bpp * png->width;
-    if(bpl >= 65536) {
+    if (bpl >= 65536) {
         fprintf(stderr, "[libattopng] ERROR: maximum supported width for this type of PNG is %d pixel\n", (int)(65535 / png->bpp));
         return NULL;
     }
