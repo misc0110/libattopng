@@ -59,24 +59,30 @@ libattopng_t *libattopng_new(size_t width, size_t height, libattopng_type_t type
     png->stream_x = 0;
     png->stream_y = 0;
 
-    if (type == PNG_PALETTE) {
-        png->palette = (uint32_t *) calloc(256, sizeof(uint32_t));
-        if (!png->palette) {
-            free(png);
-            return NULL;
-        }
-        png->bpp = 1;
-    } else if (type == PNG_GRAYSCALE) {
-        png->bpp = 1;
-    } else if (type == PNG_GRAYSCALE_ALPHA) {
-        png->capacity *= 2;
-        png->bpp = 2;
-    } else if (type == PNG_RGB) {
-        png->capacity *= 4;
-        png->bpp = 3;
-    } else if (type == PNG_RGBA) {
-        png->capacity *= 4;
-        png->bpp = 4;
+    switch (type) {
+        case PNG_PALETTE:
+            png->palette = (uint32_t *) calloc(256, sizeof(uint32_t));
+            if (!png->palette) {
+                free(png);
+                return NULL;
+            }
+            png->bpp = 1;
+            break;
+        case PNG_GRAYSCALE:
+            png->bpp = 1;
+            break;
+        case PNG_GRAYSCALE_ALPHA:
+            png->capacity *= 2;
+            png->bpp = 2;
+            break;
+        case PNG_RGB:
+            png->capacity *= 4;
+            png->bpp = 3;
+            break;
+        case PNG_RGBA:
+            png->capacity *= 4;
+            png->bpp = 4;
+            break;
     }
 
     png->data = (char *) calloc(png->capacity, 1);
