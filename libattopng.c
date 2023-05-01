@@ -53,7 +53,7 @@ libattopng_t *libattopng_new(size_t width, size_t height, libattopng_type_t type
     png->palette_length = 0;
     png->palette = NULL;
     png->out = NULL;
-    png->out_capacity = 0;
+    png->out_capacity = png->capacity + 4096 * 8 + png->width * png->height;
     png->out_pos = 0;
     png->type = type;
     png->stream_x = 0;
@@ -277,7 +277,6 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
         /* delete old output if any */
         free(png->out);
     }
-    png->out_capacity = png->capacity + 4096 * 8 + png->width * png->height;
     png->out = (char *) calloc(png->out_capacity, 1);
     png->out_pos = 0;
     if (!png->out) {
