@@ -1,5 +1,4 @@
 # libattopng
-[![Build Status](https://travis-ci.com/misc0110/libattopng.svg?branch=master)](https://travis-ci.com/misc0110/libattopng)
 
 `libattopng` is a minimal C library to create uncompressed PNG images.
 It is cross-platform compatible, has no dependencies and a very small footprint of less than 10kB.
