@@ -12,7 +12,10 @@
 
 
 int main(int argc, char *argv[]) {
-    libattopng_t *png = libattopng_new(W, H, PNG_PALETTE);
+    int x, y;
+    libattopng_t *png;
+    
+    png = libattopng_new(W, H, PNG_PALETTE);
     uint32_t palette[] = {
             RGBA(0, 0, 0xff, 0xff),
             RGBA(0, 0xff, 0, 0x80),
