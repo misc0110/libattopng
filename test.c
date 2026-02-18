@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
             RGBA(0xff, 0, 0, 0xff),
             RGBA(0xff, 0, 0xff, 0x80)
     };
-    libattopng_set_palette(png, palette, 4);
+    libattopng_set_palette(png, palette, 16);
 
     int x, y;
     for (y = 0; y < H; y++) {
