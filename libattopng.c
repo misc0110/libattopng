@@ -300,7 +300,7 @@ char *libattopng_get_data(libattopng_t *png, size_t *len) {
     /* palette */
     if (png->type == PNG_PALETTE) {
         char entry[3];
-        size_t s = png->palette_length;
+        size_t s = png->palette_length * sizeof(uint32_t);
         if (s < 16) {
             s = 16; /* minimum palette length */
         }
